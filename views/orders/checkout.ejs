@@ -1,0 +1,229 @@
+<%- include('../../partials/header') %>
+<body>
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Checkout Tiket</h1>
+        <p class="text-gray-600 mt-2">Lengkapi informasi untuk pembelian tiket</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Order Form -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-6">Informasi Pemesan</h3>
+                <% if(errors && errors.length > 0)  {%>
+                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
+                    <ul class="list-disc list-inside">
+                        <% errors.forEach(error => { %>
+                            <li><%= error %></li>
+                        <% }) %>
+                    </ul> 
+                </div>
+                 <% } %> 
+
+            <form method="POST" class="space-y-6" action="/events/<%= event.id %>/checkout">
+                <input type="hidden" name="event_id" value="1">
+                <!-- Event Info -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-900 mb-2"><%= event.title %></h4>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <div class="flex justify-between">
+                            <span>Tanggal:</span>
+                            <span>
+                                <%= new Date(event.event_date).toLocaleDateString('id-ID'), {
+                                        weekday: 'long',
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric'
+                                     } %>
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Lokasi:</span>
+                            <span><%= event.venue %></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Harga per tiket:</span>
+                            <span>Rp <%= Number(event.price).toLocaleString('id-ID') %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">
+                        Jumlah Tiket *
+                    </label>
+                    <select id="quantity" name="quantity" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <% for(let i = 1; i<= Math.min(event.available_tickets,10); i++) { %>
+                            <option value="<%= i %>"> <%= i %> tiket</option>
+                            <% } %>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Tiket tersedia: <%= event.available_tickets %>
+                    </p>
+                </div>
+
+                <!-- Attendee Information -->
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4">Informasi Attendee</h4>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="attendee_name" class="block text-sm font-medium text-gray-700 mb-2">
+                                Nama Lengkap *
+                            </label>
+                            <input type="text" id="attendee_name" name="attendee_name" required
+                                   value="<%= (typeof formData !== 'undefined' && formData.attendee_name) ? formData.attendee_name : (user ? user.name : '') %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                   placeholder="Nama lengkap attendee">
+                        </div>
+
+                        <div>
+                            <label for="attendee_email" class="block text-sm font-medium text-gray-700 mb-2">
+                                Email *
+                            </label>
+                            <input type="email" id="attendee_email" name="attendee_email" required
+                                   value="<%= (typeof formData !== 'undefined' && formData.attendee_email) ? formData.attendee_email : (user ? user.email : '') %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                   placeholder="email@example.com">
+                        </div>
+
+                        <div>
+                            <label for="attendee_phone" class="block text-sm font-medium text-gray-700 mb-2">
+                                Nomor Telepon *
+                            </label>
+                            <input type="tel" id="attendee_phone" name="attendee_phone" required
+                                   value="<%= (typeof formData !== 'undefined' && formData.attendee_phone) ? formData.attendee_phone : '' %>"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                   placeholder="081234567890">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4">Metode Pembayaran</h4>
+                    <img src="https://www.xendit.co/wp-content/uploads/2020/05/Partner-LogoArtboard-1-copy-1-1024x488.png" alt="Payment Methods">
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start">
+                    <input type="checkbox" id="terms" name="terms" required
+                           class="mt-1 mr-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                    <label for="terms" class="text-sm text-gray-600">
+                        Saya menyetujui <a href="/terms" target="_blank" class="text-indigo-600 hover:underline">Syarat dan Ketentuan</a> 
+                        serta <a href="/privacy" target="_blank" class="text-indigo-600 hover:underline">Kebijakan Privasi</a> yang berlaku
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">
+                    Lanjut ke Pembayaran
+                </button>
+            </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="bg-white rounded-lg shadow-md p-6 h-fit sticky top-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-6">Ringkasan Pesanan</h3>
+
+            <div class="space-y-4">
+                <!-- Event Image -->
+                <img src="<%= event.image_path && !event.image_path.startsWith('/') && !/^https?:\/\//i.test(event.image_path) ? '/' + event.image_path : event.image_path %>" 
+                     alt="Konser Musik Populer 2024" 
+                     class="w-full h-32 object-cover rounded-lg">
+
+                <!-- Event Details -->
+                <div class="space-y-2">
+                    <h4 class="font-semibold text-gray-900"><%= event.title %></h4>
+                    <div class="text-sm text-gray-600 space-y-1">
+                        <div class="flex items-center">
+                            <span class="w-4 mr-2">📅</span>
+                            <span>
+                                 <%= new Date(event.event_date).toLocaleDateString('id-ID'), {
+                                        weekday: 'long',
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric'
+                                     } %>
+                            </span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-4 mr-2">📍</span>
+                            <span><%= event.venue %></span>
+                        </div>
+                        <div class="flex items-center">
+                            
+                            <% if(event.User && event.User.name) { %>
+                                <div class="flex items-center">
+                                    <span class="w-4 mr-2">👤</span>
+                                    <span><%= event.User.name %></span>
+                                </div>
+                           <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Breakdown -->
+                <div class="border-t pt-4">
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Harga per tiket</span>
+                            <span>Rp <%= Number(event.price).toLocaleString('id-ID') %></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Jumlah tiket</span>
+                            <span id="summary-quantity">1</span>
+                        </div>
+                        <div class="flex justify-between font-semibold text-lg border-t pt-2">
+                            <span>Total</span>
+                            <span id="summary-total">Rp <%= event.price.toLocaleString('id-ID') %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Notes -->
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h5 class="font-semibold text-yellow-800 mb-2">Penting!</h5>
+                    <ul class="text-xs text-yellow-700 space-y-1">
+                        <li>• Pastikan data yang diisi sudah benar</li>
+                        <li>• Pembayaran harus dilakukan sebelum waktu kedaluwarsa</li>
+                        <li>• Tiket tidak dapat dikembalikan setelah pembelian</li>
+                        <li>• Simpan bukti pembayaran dan tiket</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update order summary in real-time
+const quantitySelect = document.getElementById('quantity');
+const summaryQuantity = document.getElementById('summary-quantity');
+const summaryTotal = document.getElementById('summary-total');
+const pricePerTicket = <%= event.price %>;
+
+function updateSummary() {
+    const quantity = parseInt(quantitySelect.value);
+    const total = pricePerTicket * quantity;
+    
+    summaryQuantity.textContent = quantity;
+    summaryTotal.textContent = 'Rp ' + total.toLocaleString('id-ID');
+}
+
+if (quantitySelect) {
+    quantitySelect.addEventListener('change', updateSummary);
+    // Initial update
+    updateSummary();
+}
+</script>
+
+<!-- Footer -->
+<%- include('../../partials/footer') %>
+
+</body>
+</html>

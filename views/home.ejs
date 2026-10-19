@@ -1,0 +1,597 @@
+<%- include('../partials/header.ejs') %>
+<!-- Hero Section dengan Slider -->
+<section class="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20 overflow-hidden">
+    <div class="absolute inset-0 z-0">
+        <div class="swiper-container h-full">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="w-full h-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); opacity: 0.2;"></div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); opacity: 0.2;"></div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); opacity: 0.2;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">Temukan Event Menarik</h1>
+        <p class="text-xl mb-8 text-indigo-100">Jelajahi berbagai event seru dan bergabunglah dengan komunitas yang penuh inspirasi</p>
+        <a href="/events" class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">
+            Jelajahi Events
+        </a>
+    </div>
+</section>
+
+<!-- Search & Filter Section -->
+<section class="py-12 bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="bg-gray-50 rounded-2xl p-8 shadow-sm">
+            <h3 class="text-2xl font-bold text-center mb-8 text-gray-800">
+                <i class="fas fa-filter mr-2 text-indigo-600"></i>Temukan Event Impian Anda
+            </h3>
+            
+            <!-- Search Bar -->
+            <form action="/events" method="GET" class="mb-8">
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <input type="text" name="search" placeholder="Cari event berdasarkan judul..." 
+                               class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-lg">
+                    </div>
+                    <button type="submit" class="bg-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-indigo-700 transition duration-300">
+                        <i class="fas fa-search mr-2"></i>Cari
+                    </button>
+                </div>
+            </form>
+
+            <!-- Category & City Filters -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Category Filter -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-700 flex items-center">
+                        <i class="fas fa-layer-group mr-2 text-indigo-600"></i>Filter by Kategori
+                    </h4>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="/events" class="bg-white border-2 border-gray-200 rounded-xl px-4 py-2 hover:border-indigo-500 hover:shadow-md transition duration-300">
+                            <span class="text-sm font-medium text-gray-700">Semua Kategori</span>
+                        </a>
+
+                        <!--
+                            menjalankan JavaScript tanpa menampilkan hasilnya.
+                            forEach mengulang setiap data di dalam array categories.
+                            Pada setiap putaran, satu kategori disimpan di variabel category.
+                        -->
+                        <% categories.forEach(category =>{ %>
+                            <!--
+                                 menampilkan nilai ke HTML dengan aman.
+                                Contoh hasil href: /events?category=3
+                            -->
+                            <a href="/events?category=<%= category.id %>" class="bg-white border-2 border-gray-200 rounded-xl px-4 py-2 hover:border-indigo-500 hover:shadow-md transition duration-300">
+                                <span class="text-sm font-medium text-gray-700"><%= category.name %></span>
+                            </a>
+
+                        <!-- Menutup perulangan JavaScript yang dibuka di atas. -->
+                        <% }) %>
+                    </div>
+                </div>
+                
+                <!-- City Filter dengan Gambar -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-700 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2 text-indigo-600"></i>Filter by Kota
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <a href="/events" class="bg-white border-2 border-gray-200 rounded-xl p-3 text-center hover:border-indigo-500 hover:shadow-md transition duration-300 group">
+                            <div class="w-16 h-16 mx-auto mb-2 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center group-hover:from-indigo-200 group-hover:to-purple-200 transition-all duration-300">
+                                <i class="fas fa-globe text-indigo-600 text-xl"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700">Semua Kota</span>
+                        </a>
+                        <% if(cities && cities.length > 0){ %>
+                            <% cities.slice(0,5).forEach(city => { %>
+                                <a href="/events?city=<%= city %>" class="bg-white border-2 border-gray-200 rounded-xl p-3 text-center hover:border-indigo-500 hover:shadow-md transition duration-300 group">
+                                <div class="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-110 transition-transform duration-300">
+                                    <img src="<%= getCityImage(city) %>" 
+                                        alt="<%= city %>" 
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <span class="text-sm font-medium text-gray-700"><%= city %></span>
+                                </a>
+                           <% }) %>
+
+                           <% if(cities.length > 5) { %>
+                                <a href="/events" class="bg-white border-2 border-gray-200 rounded-xl p-3 text-center hover:border-indigo-500 hover:shadow-md transition duration-300 group">
+                                <div class="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-110 transition-transform duration-300">
+                                    <div class=""fas fa-ellipsis-h text-gray-600 text-xl></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Lainnya</span>
+                                </a>
+                           <%}%> 
+                        <%}else {%>
+                        <!-- Fallback jika cities kosong -->
+                          <a href="/events?city=jakarta" class="bg-white border-2 border-gray-200 rounded-xl p-3 text-center hover:border-indigo-500 hover:shadow-md transition duration-300 group">
+                                <div class="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-110 transition-transform duration-300">
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqyKWWQKopbtP7xVaEaf2w91f8_Q_gFFd4Rr6n8bW4Mg&s=10" 
+                                        alt="Jakarta" 
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <span class="text-sm font-medium text-gray-700">Jakarta</span>
+                          </a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-16 bg-gradient-to-br from-gray-50 to-indigo-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12 text-gray-900">Kategori Event Populer</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            <% categories.forEach(category => { %>
+                    <a href="/events?category=<%= category.id %>" class="group bg-white rounded-2xl p-6 text-center hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <!-- <i class="fas fa-music text-purple-500"></i> -->
+                     <% if(category.icon && category.icon.includes('fa-')) { %>
+                        <div class="<%= category.icon %>"></div>
+                    <%} else { %>
+                        <% if(category.name.toLowerCase().includes('music') || category.name.toLowerCase().includes('musik')) { %>
+                            <i class="fas fa-music text-purple-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('technology') || category.name.toLowerCase().includes('teknologi')) { %>
+                            <i class="fas fa-laptop-code text-blue-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('business') || category.name.toLowerCase().includes('bisnis')) { %>
+                            <i class="fas fa-briefcase text-yellow-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('art & culture') || category.name.toLowerCase().includes('seni & budaya')) { %>
+                            <i class="fas fa-image text-orange-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('sport') || category.name.toLowerCase().includes('olahraga')) { %>
+                            <i class="fas fa-futbol text-black-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('education') || category.name.toLowerCase().includes('edukasi')) { %>
+                            <i class="fas fa-graduation-cap text-purple-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('food & drink') || category.name.toLowerCase().includes('kuliner')) { %>
+                            <i class="fas fa-utensils text-green-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('health') || category.name.toLowerCase().includes('kesehatan')) { %>
+                            <i class="fas fa-house-chimney-medical text-red-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('charity') || category.name.toLowerCase().includes('donasi')) { %>
+                            <i class="fas fa-solid fa-hand-holding-heart text-pink-500"></i>
+                        <% }else if(category.name.toLowerCase().includes('entertaiment') || category.name.toLowerCase().includes('hiburan')) { %>
+                            <i class="fas fa-solid fa-tv text-blue-500"></i>
+                        <% }else{ %>
+                            <div class="fas fa-calendar-alt text-gray-500"></div>
+                        <% } %>
+                    <% } %>
+                </div>
+                <h3 class="font-bold text-gray-800 group-hover:text-indigo-600 transition-colors duration-300 text-sm"><%= category.name %></h3>
+            </a>
+            <%})%>
+            
+           
+        </div>
+    </div>
+</section>
+
+<!-- EVENTS BY CITY - SLIDER VERSION (Satu Section untuk semua kota) -->
+<section class="py-16 bg-gradient-to-br from-blue-50 to-cyan-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center mb-12">
+            <div>
+                <h2 class="text-4xl font-bold text-gray-900 mb-2">Event Berdasarkan Kota</h2>
+                <p class="text-gray-600">Jelajahi event seru di berbagai kota di Indonesia</p>
+            </div>
+            <a href="/events" class="group bg-white text-indigo-600 px-6 py-3 rounded-xl font-semibold hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-md hover:shadow-xl border border-indigo-200">
+                Lihat Semua Event <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+            </a>
+        </div>
+
+        <!-- Tabs untuk Kota -->
+        <div class="mb-8">
+            <div class="flex flex-wrap gap-3 mb-6">
+                <!-- Tab "Semua Kota" -->
+                <button class="city-tab active bg-white border-2 border-indigo-500 text-indigo-600 px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center" data-city="all">
+                    <i class="fas fa-globe mr-2"></i>Semua Kota
+                </button>
+                
+                <!-- Tabs untuk setiap kota -->
+                 <% if(cities && cities.length > 0) {%>
+                    <% cities.slice(0,6).forEach((city, index) => { %>
+                        <button class="city-tab bg-white border-2 border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold hover:border-indigo-400 hover:text-indigo-600 hover:shadow-md transition-all duration-300 flex items-center" data-city="<%= city %>">
+                            <div class="w-6 h-6 rounded-full overflow-hidden mr-2 border border-gray-300">
+                             <img src="<%= getCityImage(city) %>" 
+                                    alt="<%= city %>" 
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <%= city %>
+                        </button>
+                   <% }) %>  
+                 <% } %> 
+
+            </div>
+        </div>
+
+        <!-- Container untuk Event per Kota (Akan diisi via JS) -->
+        <div id="city-events-container">
+            <!-- Default: Tampilkan semua event terbaru -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <% latestEvent.slice(0,6).forEach(event => { %>
+                    <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 border border-gray-100">
+                    <div class="relative overflow-hidden">
+                        <img src="<%= event.image_path %>" 
+                             alt="<%= event.title %>" 
+                             class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-4 left-4">
+                            <span class="bg-white/90 backdrop-blur-sm text-indigo-600 px-3 py-1.5 rounded-full text-sm font-semibold flex items-center shadow-lg">
+                                <i class="fas fa-tag mr-1.5 text-xs"></i>
+                                <%= event.Category.name %>
+                            </span>
+                        </div>
+                        <div class="absolute top-4 right-4">
+                            <span class="bg-indigo-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg">
+                                Rp <%= Number(event.price).toLocaleString('id-ID') %>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors duration-300">
+                            <%= event.title %>
+                        </h3>
+
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center text-gray-600 text-sm">
+                                <i class="fas fa-calendar-alt mr-2 text-indigo-500"></i>
+                                <span><%= new Date(event.event_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) %></span>
+                            </div>
+                            <div class="flex items-center text-gray-600 text-sm">
+                                <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
+                                <span class="truncate"><%= event.venue %></span>
+                            </div>
+                            <div class="flex items-center text-gray-600 text-sm">
+                                <i class="fas fa-city mr-2 text-green-500"></i>
+                                <span><%= event.city %></span>
+                            </div>
+                        </div>
+
+                        <a href="/events/<%= event.id %>" 
+                           class="group/btn w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl">
+                            <i class="fas fa-eye mr-2"></i>
+                            Lihat Detail
+                        </a>
+                    </div>
+                </div>
+               <% }) %>
+               </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Events Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center mb-12">
+            <div>
+                <h2 class="text-4xl font-bold text-gray-900 mb-2">Event Terbaru</h2>
+                <p class="text-gray-600">Temukan event-event fresh yang baru saja ditambahkan</p>
+            </div>
+            <a href="/events" class="group bg-white text-indigo-600 px-6 py-3 rounded-xl font-semibold hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-md hover:shadow-xl border border-indigo-200">
+                Lihat Semua <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-300"></i>
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            <% latestEvent.slice(0,6).forEach(event => { %>
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 border border-gray-100">
+                <!-- Image Container -->
+                <div class="relative overflow-hidden">
+                    <img src="<%= event.image_path  %>" 
+                         alt="<%= event.title %>" 
+                         class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <!-- Overlay Gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <!-- Category Badge -->
+                    <div class="absolute top-4 left-4">
+                        <span class="bg-white/90 backdrop-blur-sm text-indigo-600 px-3 py-1.5 rounded-full text-sm font-semibold flex items-center shadow-lg">
+                            <i class="fas fa-tag mr-1.5 text-xs"></i>
+                            <%= event.Category.name  %>
+                        </span>
+                    </div>
+                    <!-- Price Badge -->
+                    <div class="absolute top-4 right-4">
+                        <span class="bg-indigo-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg">
+                              Rp <%= Number(event.price).toLocaleString('id-ID') %>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+                    <!-- Title -->
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors duration-300 leading-tight">
+                        <%= event.title  %>
+                    </h3>
+
+                    <!-- Description -->
+                    <p class="text-gray-600 mb-4 line-clamp-2 leading-relaxed text-sm">
+                        <%= event.description %>
+                    </p>
+
+                    <!-- Event Details -->
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center text-gray-700">
+                            <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-calendar-alt text-indigo-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-medium block truncate">
+                                    <!-- Sab, 15 Des 2024 -->
+                                     <%= new Date(event.event_date).toLocaleDateString('id-ID'), {
+                                        weekday: 'short',
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric'
+                                     } %>
+                                </span>
+                                <span class="text-xs text-gray-500">
+                                    <!-- 19:00 -->
+                                      <%= new Date(event.event_date).toLocaleTimeString('id-ID'), {
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                     } %>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center text-gray-700">
+                            <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-indigo-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-medium block truncate"><%= event.venue  %></span>
+                                <span class="text-xs text-gray-500 truncate"><%= event.city  %></span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center text-gray-700">
+                            <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-user text-indigo-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-medium block truncate"><%= event.User.name %></span>
+                                <span class="text-xs text-gray-500">Organizer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <a href="/events/<%= event.id %>" 
+                       class="group/btn w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3.5 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-ticket-alt mr-3 group-hover/btn:rotate-12 transition-transform duration-300"></i>
+                        Lihat Detail Event
+                        <i class="fas fa-arrow-right ml-2 group-hover/btn:translate-x-1 transition-transform duration-300"></i>
+                    </a>
+                </div>
+            </div>
+        <%  }) %>
+        </div>
+    </div>
+</section>
+
+<script>
+// Function untuk mendapatkan gambar kota
+// function getCityImage(city) {
+//     const cityImages = {
+//         'Jakarta': 'https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+//         'Bandung': 'https://images.unsplash.com/photo-1588666309999-ef3b59d9362d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+//         'Surabaya': 'https://images.unsplash.com/photo-1588666309990-5d90b421f449?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+//         'Yogyakarta': 'https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+//         'Bali': 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+//         'Medan': 'https://images.unsplash.com/photo-1588666309990-5d90b421f449?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+//         'Semarang': 'https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+//         'Malang': 'https://images.unsplash.com/photo-1588666309999-ef3b59d9362d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+//     };
+//     return cityImages[city] || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+// }
+
+// Tab functionality untuk filter kota
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Loaded - Initializing city tabs');
+    
+    const cityTabs = document.querySelectorAll('.city-tab');
+    const cityEventsContainer = document.getElementById('city-events-container');
+    
+    // Debug: Cek elemen yang ditemukan
+    console.log('City tabs found:', cityTabs.length);
+    console.log('City events container found:', cityEventsContainer !== null);
+    
+    // Simpan template default untuk semua event
+    const defaultEventsHTML = cityEventsContainer.innerHTML;
+    
+    // Buat array semua event dari data yang ada di page
+    const allEvents = [];
+    
+    // Ambil data event dari cards yang sudah ada di page
+    const eventCards = document.querySelectorAll('#city-events-container .group');
+    eventCards.forEach(card => {
+        const title = card.querySelector('h3')?.textContent.trim();
+        const description = card.querySelector('p')?.textContent.trim() || '';
+        const image = card.querySelector('img')?.src || '';
+        const cityElement = card.querySelector('.fa-city')?.parentElement?.querySelector('span');
+        const city = cityElement?.textContent.trim() || '';
+        const venueElement = card.querySelector('.fa-map-marker-alt')?.parentElement?.querySelector('span');
+        const venue = venueElement?.textContent.trim() || '';
+        const priceElement = card.querySelector('.bg-indigo-600')?.textContent.trim();
+        const price = priceElement ? parseInt(priceElement.replace(/[^0-9]/g, '')) : 0;
+        const categoryElement = card.querySelector('.bg-white\\/90')?.textContent.trim();
+        const category = categoryElement || '';
+        const eventLink = card.querySelector('a[href^="/events/"]')?.href;
+        const eventId = eventLink ? eventLink.split('/').pop() : '';
+        
+        if (title && eventId) {
+            allEvents.push({
+                id: eventId,
+                title: title,
+                description: description,
+                image_path: image,
+                city: city,
+                venue: venue,
+                price: price,
+                category_name: category
+            });
+        }
+    });
+    
+    console.log('Events collected:', allEvents.length);
+    
+    // Event listener untuk tabs
+    cityTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            console.log('Tab clicked:', this.getAttribute('data-city'));
+            
+            // Remove active class dari semua tabs
+            cityTabs.forEach(t => {
+                t.classList.remove('active', 'border-indigo-500', 'text-indigo-600', 'bg-indigo-50');
+                t.classList.add('border-gray-200', 'text-gray-700', 'bg-white');
+            });
+            
+            // Add active class ke tab yang diklik
+            this.classList.add('active', 'border-indigo-500', 'text-indigo-600', 'bg-indigo-50');
+            this.classList.remove('border-gray-200', 'text-gray-700', 'bg-white');
+            
+            const city = this.getAttribute('data-city');
+            filterEventsByCity(city);
+        });
+    });
+    
+    function filterEventsByCity(city) {
+        console.log('Filtering by city:', city);
+        
+        if (city === 'all') {
+            // Tampilkan semua event
+            cityEventsContainer.innerHTML = defaultEventsHTML;
+            console.log('Showing all events');
+        } else {
+            // Filter event berdasarkan kota
+            const filteredEvents = allEvents.filter(event => 
+                event.city.toLowerCase().includes(city.toLowerCase())
+            );
+            
+            console.log('Filtered events:', filteredEvents.length);
+            renderEvents(filteredEvents);
+        }
+    }
+    
+    function renderEvents(events) {
+        if (events.length === 0) {
+            cityEventsContainer.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-map-marker-alt text-gray-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Belum ada event di kota ini</h3>
+                    <p class="text-gray-500 mb-6">Coba cari event di kota lain</p>
+                    <a href="/events" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">
+                        Lihat Semua Event
+                    </a>
+                </div>
+            `;
+            return;
+        }
+        
+        const eventsHTML = events.map(event => `
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 border border-gray-100">
+                <div class="relative overflow-hidden">
+                    <img src="${event.image_path || '/images/event-placeholder.jpg'}" 
+                         alt="${event.title}" 
+                         class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute top-4 left-4">
+                        <span class="bg-white/90 backdrop-blur-sm text-indigo-600 px-3 py-1.5 rounded-full text-sm font-semibold flex items-center shadow-lg">
+                            <i class="fas fa-tag mr-1.5 text-xs"></i>
+                            ${event.category_name}
+                        </span>
+                    </div>
+                    <div class="absolute top-4 right-4">
+                        <span class="bg-indigo-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg">
+                            Rp ${event.price.toLocaleString('id-ID')}
+                        </span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors duration-300">
+                        ${event.title}
+                    </h3>
+                    ${event.description ? `<p class="text-gray-600 mb-4 line-clamp-2 text-sm">${event.description}</p>` : ''}
+                    <div class="space-y-2 mb-4">
+                        <div class="flex items-center text-gray-600 text-sm">
+                            <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
+                            <span class="truncate">${event.venue}</span>
+                        </div>
+                        <div class="flex items-center text-gray-600 text-sm">
+                            <i class="fas fa-city mr-2 text-green-500"></i>
+                            <span>${event.city || 'Online'}</span>
+                        </div>
+                    </div>
+                    <a href="/events/${event.id}" 
+                       class="group/btn w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl">
+                        <i class="fas fa-eye mr-2"></i>
+                        Lihat Detail
+                    </a>
+                </div>
+            </div>
+        `).join('');
+        
+        cityEventsContainer.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                ${eventsHTML}
+            </div>
+        `;
+    }
+    
+    // Add loading state jika mau fetch dari API
+    function fetchEventsByCity(city) {
+        cityEventsContainer.innerHTML = `
+            <div class="text-center py-12">
+                <div class="w-16 h-16 mx-auto mb-4 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                <p class="text-gray-600">Memuat event...</p>
+            </div>
+        `;
+    }
+});
+
+// Countdown Timer
+function updateCountdowns() {
+    document.querySelectorAll('.countdown').forEach(element => {
+        const eventDate = new Date(element.getAttribute('data-date'));
+        const now = new Date();
+        const diff = eventDate - now;
+
+        if (diff > 0) {
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            
+            if (days > 0) {
+                element.textContent = `${days}h ${hours}j`;
+            } else {
+                element.textContent = `${hours}j`;
+            }
+        } else {
+            element.textContent = 'Segera';
+        }
+    });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateCountdowns();
+    setInterval(updateCountdowns, 60000);
+    
+    // Debug info
+    console.log('City filter initialized successfully');
+});
+</script>
+
+
+
+<%- include('../partials/footer.ejs') %>

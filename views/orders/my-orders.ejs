@@ -1,0 +1,106 @@
+<%- include('../../partials/header') %>
+<body>
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Pesanan Saya</h1>
+        <p class="text-gray-600 mt-2">Lihat riwayat dan status pesanan tiket event Anda</p>
+    </div>
+
+
+    <% if(orders.length === 0) { %>
+        <div class="text-center py-12">
+            <div class="text-gray-400 text-6xl mb-4">🎫</div>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">Belum ada Pesanan</h3>
+            <p class="text-gray-500 mb-6">Silahkan beli tiket dahulu</p>
+            <a href="/events" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">
+                Jelajahi Events
+            </a>
+        </div>
+    <% } else {%>
+    <div class="space-y-6">
+        <% orders.forEach((order) => { %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                            <%= order.Event.title %>
+                        </h3>
+                        <div class="flex items-center space-x-4 text-sm text-gray-600">
+                            <span class="flex items-center">
+                                <span class="mr-1">📅</span>
+                                <%= new Date(order.Event.event_date).toLocaleDateString('id-ID') %>
+                            </span>
+                            <span class="flex items-center">
+                                <span class="mr-1">📍</span>
+                               <%= order.Event.venue %>
+                            </span>
+                            <span class="flex items-center">
+                                <span class="mr-1">🎫</span>
+                                 <%= order.quantity %> Tiket
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-4 md:mt-0 text-right">
+                        <span class="text-2xl font-bold text-indigo-600">
+                            Rp <%= order.total_amount.toLocaleString('id-ID') %>
+                        </span>
+                        <div class="mt-1">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                                <%= order.status === 'paid' ? 'bg-green-100 text-gren-800' :
+                                    order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                    order.status === 'expired' ? 'bg-red-100 text-red-800' :
+                                    'bg-gray-100 text-gray-800' %>">
+                                <%= order.status === 'paid' ? 'Lunas':
+                                    order.status === 'pending' ? 'Menunggu Pembayaran':
+                                    order.status === 'expired' ? 'Kadaluarsa':
+                                    order.status === 'cancelled' ? 'Dibatalkan': order.status %>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between">
+                    <div class="text-sm text-gray-600">
+                        <p>Order ID: <%= order.id %> • 
+                        <%= new Date(order.created_at).toLocaleDateString('id-ID'), {
+                                        weekday: 'long',
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric'
+                                     } %></p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-3">
+                        <% if(order.status === 'paid') { %>
+                        <a href="/orders/<%= order.id%>" 
+                           class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition duration-300">
+                            Lihat Tiket
+                        </a>
+                            <% }else if(order.status === 'pending') {%>
+                                <% if (order.xendit_payment_url) { %>
+                            <a href="<%= order.xendit_payment_url %>" 
+                            class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition duration-300">
+                            Bayar Sekarang
+                            </a>
+                            <% } %>
+                            <% } %>
+                        <a href="/events/<%=order.Event.id%>" 
+                           class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 transition duration-300">
+                            Lihat Event
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>  
+       
+        <% }) %>
+    
+ </div>
+    <% } %>
+</div>
+
+<!-- Footer -->
+<%- include('../../partials/footer') %>
+
+</body>
+</html>

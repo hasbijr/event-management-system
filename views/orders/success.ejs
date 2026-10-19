@@ -1,0 +1,300 @@
+<%- include('../../partials/header') %>
+<body>
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Success Message -->
+    <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Pembayaran Berhasil!</h1>
+        <p class="text-gray-600">Tiket Anda sudah berhasil diproses. Detail tiket dapat dilihat di bawah.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Order Details -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Order Info -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Informasi Pesanan</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-gray-500">Nomor Pesanan</p>
+                        <p class="font-semibold">#<%=order.id %></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Status</p>
+                        <p class="font-semibold text-green-600 capitalize
+                        <%= order.status === 'paid' ? 'text-green-600' :
+                                order.status === 'pending' ? 'text-yellow-600':
+                                'text-red-800' %>">
+                            
+                                <%= order.status %>
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Tanggal Pesanan</p>
+                        <p class="font-semibold"><%= new Date(order.created_at).toLocaleDateString('id-ID') %></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Total Pembayaran</p>
+                        <p class="font-semibold text-lg text-indigo-600">
+                            Rp. <%= order.total_amount.toLocaleString('id-ID') %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Info -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Informasi Event</h3>
+                <div class="flex items-start space-x-4">
+                    <img src="<%= order.Event.image_path && !order.Event.image_path.startsWith('/') && !/^https?:\/\//i.test(order.Event.image_path) ? '/' + order.Event.image_path : order.Event.image_path %>" 
+                         alt="<%= order.Event.title %>" 
+                         class="w-20 h-20 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-900 text-lg"><%= order.Event.title %></h4>
+                        <div class="text-sm text-gray-600 space-y-1 mt-2">
+                            <div class="flex items-center">
+                                <span class="w-4 mr-2">📅</span>
+                                <span>
+                                    <%= new Date (order.Event.event_date).toLocaleDateString('id-ID', {
+                                        weekday: 'long',
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric'
+                                    }) %>
+
+                                </span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-4 mr-2">📍</span>
+                                <span><%= order.Event.venue %></span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-4 mr-2">👤</span>
+                                <span><%= order.Event.User.name %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Tiket Anda (<%= order.Tickets.length %>)</h3>
+                <div class="space-y-4">
+                <% order.Tickets.forEach((ticket, index) => { %>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Tiket #<%= index+1 %></h4>
+                                <p class="text-sm text-gray-600">Kode: <%= ticket.ticket_code %></p>
+                            </div>
+                            <span class="px-2 py-1 rounded text-xs font-medium <%= ticket.is_attended ? 'bg-green-100 text-green-800' :'bg-yellow-100 text-yellow-800 text-yellow-600' %>">
+                                <%= ticket.is_attended ? 'Sudah Digunakan': 'Belum digunakan' %>
+                            </span>
+                        </div>
+                        
+                        <!-- Barcode -->
+                        <div class="text-center mb-4">
+                            <div class="bg-white p-4 border border-gray-200 rounded-lg inline-block">
+                                <!-- <svg id="barcode-1" class="mb-2"></svg> -->
+                                 <svg id="barcode-<%= ticket.id %>" class="mb-2"></svg>
+                                <p class="text-xs text-gray-600 font-mono"><%= ticket.barcode_data %></p>
+                            </div>
+                        </div>
+
+                        
+                            <!-- generate gambar barcode dengan js -->
+                             <script>
+                               <% order.Tickets.forEach(ticket =>{ %>
+                                JsBarcode("#barcode-<%=ticket.id %>", "<%= ticket.barcode_data %>",{
+                                format:"CODE128",
+                                width: 0.5,
+                                height: 60,
+                                displayValue: false,
+                                })
+                               <% }) %>
+                            
+                            
+                            </script>
+                        
+
+                        <!-- Attendee Info -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-500">Nama Attendee</p>
+                                <p class="font-semibold"><%= ticket.attendee_name %></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Email</p>
+                                <p class="font-semibold"><%= ticket.attendee_email %></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Telepon</p>
+                                <p class="font-semibold"><%= ticket.attendee_phone %></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Status Check-in</p>
+                                <p class="font-semibold <%= ticket.is_attended ? 'text-green-600' :'text-yellow-600' %>">
+                                    <%= ticket.is_attended ? 'Sudah Check-in' : 'Belum Check-in' %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                   <% }) %>
+                    
+
+
+               
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Sidebar -->
+        <div class="space-y-6">
+            <!-- Print Ticket -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Aksi</h3>
+                <div class="space-y-3">
+                    <button onclick="window.print()" 
+                            class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">
+                        🖨️ Print Tiket
+                    </button>
+                    <a href="/events/1" 
+                       class="block w-full bg-gray-100 text-gray-700 text-center py-2 rounded-lg font-semibold hover:bg-gray-200 transition duration-300">
+                        📋 Lihat Event
+                    </a>
+                    <a href="/events" 
+                       class="block w-full bg-gray-100 text-gray-700 text-center py-2 rounded-lg font-semibold hover:bg-gray-200 transition duration-300">
+                        🎫 Cari Event Lain
+                    </a>
+                </div>
+            </div>
+
+            <!-- Important Information -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h4 class="font-semibold text-blue-900 mb-3">Informasi Penting</h4>
+                <ul class="text-sm text-blue-800 space-y-2">
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Bawa tiket ini (cetak atau digital) saat menghadiri event</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Tunjukkan barcode untuk check-in di lokasi event</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Datang 30 menit sebelum event dimulai</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Hubungi penyelenggara jika ada kendala</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contact Organizer -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h4 class="font-semibold text-gray-900 mb-3">Butuh Bantuan?</h4>
+                <div class="text-sm text-gray-600 space-y-2">
+                    <p>Hubungi penyelenggara event:</p>
+                    <div class="flex items-center">
+                        <span class="w-4 mr-2">👤</span>
+                        <span><%= order.Event.User.name %></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 mr-2">📧</span>
+                        <span><%= order.Event.User.email %></span>
+                    </div>
+                   <% if (order.Event.User.phone) { %>
+                    <div class="flex items-center">
+                        <span class="w-4 mr-2">📞</span>
+                        <span><%= order.Event.User.phone %></span>
+                    </div>
+                    <% } %>
+
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Generate barcodes for each ticket
+document.addEventListener('DOMContentLoaded', function() {
+    // Generate barcode for ticket 1
+    JsBarcode("#barcode-1", "TKT-ABC123-XYZ456", {
+        format: "CODE128",
+        width: 2,
+        height: 60,
+        displayValue: false
+    });
+    
+    // Generate barcode for ticket 2
+    JsBarcode("#barcode-2", "TKT-DEF789-GHI012", {
+        format: "CODE128",
+        width: 2,
+        height: 60,
+        displayValue: false
+    });
+});
+
+// Print styling
+function beforePrint() {
+    document.body.classList.add('printing');
+}
+
+function afterPrint() {
+    document.body.classList.remove('printing');
+}
+
+// Add print event listeners
+if (window.matchMedia) {
+    const mediaQueryList = window.matchMedia('print');
+    mediaQueryList.addListener((mql) => {
+        if (mql.matches) {
+            beforePrint();
+        } else {
+            afterPrint();
+        }
+    });
+}
+
+window.onbeforeprint = beforePrint;
+window.onafterprint = afterPrint;
+</script>
+
+<style>
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+    
+    .bg-white {
+        background: white !important;
+        border: 1px solid #000 !important;
+    }
+    
+    .text-gray-900 {
+        color: #000 !important;
+    }
+    
+    .text-gray-600 {
+        color: #333 !important;
+    }
+}
+</style>
+
+ <!-- Footer -->
+<%- include('../../partials/footer') %>
+</body>
+</html>

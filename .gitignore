@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+public/uploads/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+Thumbs.db
+.DS_Store
+test-xendit.js

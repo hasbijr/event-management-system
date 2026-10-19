@@ -1,0 +1,99 @@
+<%- include('../../partials/header') %>
+<body>
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Buat Akun Baru
+        </h2>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <% if(errors && errors.length > 0)  {%>
+                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
+                    <ul class="list-disc list-inside">
+                        <% errors.forEach(error => { %>
+                            <li><%= error %></li>
+                        <% }) %>
+                    </ul>
+                </div>
+           <% } %> 
+            <form class="space-y-6" method="POST">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                    <div class="mt-1">
+                        <input id="name" name="name" type="text" required 
+                               value="<%= (typeof formData !== 'undefined' && formData.name) ? formData.name : '' %>"
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <div class="mt-1">
+                        <input id="email" name="email" type="email" required 
+                               value="<%= (typeof formData !== 'undefined' && formData.email) ? formData.email : '' %>"
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Nomor Telepon</label>
+                    <div class="mt-1">
+                        <input id="phone" name="phone" type="tel" 
+                               value="<%= (typeof formData !== 'undefined' && formData.phone) ? formData.phone : '' %>"
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="mt-1">
+                        <input id="password" name="password" type="password" required 
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-700">Daftar sebagai</label>
+                    <div class="mt-1">
+                        <select id="role" name="role" 
+                                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="user" <%= (typeof formData !== 'undefined' && formData.role === 'user') ? 'selected' : '' %> >Peserta Event</option>
+                            <option value="creator" <%= (typeof formData !== 'undefined' && formData.role === 'creator') ? 'selected' : '' %>>Penyelenggara Event</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Daftar
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Sudah punya akun?</span>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="./login.html" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<%- include('../../partials/footer') %>
+
+</body>
+</html>

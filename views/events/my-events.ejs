@@ -1,0 +1,106 @@
+<%- include('../../partials/header') %>
+<body class="bg-gray-50">
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Event Saya</h1>
+            <p class="text-gray-600 mt-2">Kelola event yang Anda buat</p>
+        </div>
+        <a href="/events/create" 
+           class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">
+            + Buat Event Baru
+        </a>
+    </div>
+
+    <% if(events.length === 0) { %>
+        <div class="text-center py-12">🎪</div>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">Belum Ada Event!</h3>
+        <p class="text-gray-500 mb-6">Mulai buat Event Pertama Anda dan Bagikan!</p>
+        <a href="/events/create" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300">
+            Buat Event Pertama
+        </a>
+    <% } else {%>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% events.forEach(event => { %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+            <img src="<%= event.image_path && !event.image_path.startsWith('/') && !/^https?:\/\//i.test(event.image_path) ? '/' + event.image_path : event.image_path %>" 
+                 alt="<%= event.title %>" 
+                 class="w-full h-48 object-cover">
+            
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        <%= event.Category.name %>
+                    </span>
+                    <span class="text-lg font-bold text-indigo-600">
+                        Rp <%= Number(event.price).toLocaleString('id-ID') %>
+                    </span>
+                </div>
+
+                <h3 class="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
+                    <%= event.title %>
+                </h3>
+
+                <p class="text-gray-600 mb-4 line-clamp-2 text-sm">
+                    <%= event.description %>
+                </p>
+
+                <div class="space-y-2 text-sm text-gray-500 mb-4">
+                    <div class="flex items-center">
+                        <span class="w-4 mr-2">📅</span>
+                        <span><%= new Date(event.event_date).toLocaleDateString('id-ID'), {
+                                        weekday: 'long',
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric'
+                                     } %></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 mr-2">📍</span>
+                        <span class="line-clamp-1"><%= event.venue %></span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-4 mr-2">🎫</span>
+                        <span><%= event.available_tickets %> tiket tersedia</span>
+                    </div>
+                </div>
+
+                <div class="flex space-x-2">
+                    <a href="/events/<%= event.id %>" 
+                       class="flex-1 bg-indigo-600 text-white text-center py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition duration-300">
+                        Lihat
+                    </a>
+                    <a href="/events/<%= event.id %>/edit" 
+                       class="flex-1 bg-gray-600 text-white text-center py-2 rounded-lg text-sm font-semibold hover:bg-gray-700 transition duration-300">
+                        Edit
+                    </a>
+                </div>
+
+                <div class="mt-3 flex justify-between items-center text-xs text-gray-500">
+                    <span>Dibuat: <%= new Date(event.created_at).toLocaleDateString('id-ID', {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                    }) %>
+                    </span>
+                    <span class="<%= event.is_published ? 'text-green-600' : 'text-gray-600'%>">
+                        <%= event.is_published ? 'Published' : 'Unpublished' %>
+                </div>
+            </div>
+        </div>
+        <% }) %>
+
+
+ 
+    </div>
+    <% } %>
+
+</div>
+
+<!-- Footer -->
+<%- include('../../partials/footer') %>
+
+</body>
+</html>
